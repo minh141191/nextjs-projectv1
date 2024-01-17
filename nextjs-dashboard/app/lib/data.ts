@@ -21,11 +21,24 @@ export async function fetchRevenue() {
     // console.log('Fetching revenue data...');
     // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
+    // const data = await sql<Revenue>`SELECT * FROM revenue`;
 
     // console.log('Data fetch completed after 3 seconds.');
 
-    return data.rows;
+    return [
+      {
+        month: "Jan",
+        revenue: 2000
+      },
+      {
+        month: "Feb",
+        revenue: 1700
+      },
+      {
+        month: "Jul",
+        revenue: 3800
+      }
+    ];
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch revenue data.');
@@ -34,18 +47,54 @@ export async function fetchRevenue() {
 
 export async function fetchLatestInvoices() {
   try {
-    const data = await sql<LatestInvoiceRaw>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
-      LIMIT 5`;
+    // const data = await sql<LatestInvoiceRaw>`
+    //   SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
+    //   FROM invoices
+    //   JOIN customers ON invoices.customer_id = customers.id
+    //   ORDER BY invoices.date DESC
+    //   LIMIT 5`;
 
-    const latestInvoices = data.rows.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
-    return latestInvoices;
+    // const latestInvoices = data.rows.map((invoice) => ({
+    //   ...invoice,
+    //   amount: formatCurrency(invoice.amount),
+    // }));
+    return [
+      {
+        id: '3958dc9e-712f-4377-85e9-fec4b6a6442a',
+        name: 'Delba de Oliveira',
+        email: 'delba@oliveira.com',
+        image_url: '/customers/delba-de-oliveira.png',
+        amount: '15795'
+      },
+      {
+        id: '3958dc9e-742f-4377-85e9-fec4b6a6442a',
+        name: 'Lee Robinson',
+        email: 'lee@robinson.com',
+        image_url: '/customers/lee-robinson.png',
+        amount: '15795'
+      },
+      {
+        id: '3958dc9e-737f-4377-85e9-fec4b6a6442a',
+        name: 'Hector Simpson',
+        email: 'hector@simpson.com',
+        image_url: '/customers/hector-simpson.png',
+        amount: '15795'
+      },
+      {
+        id: '50ca3e18-62cd-11ee-8c99-0242ac120002',
+        name: 'Steven Tey',
+        email: 'steven@tey.com',
+        image_url: '/customers/steven-tey.png',
+        amount: '15795'
+      },
+      {
+        id: '3958dc9e-787f-4377-85e9-fec4b6a6442a',
+        name: 'Steph Dietz',
+        email: 'steph@dietz.com',
+        image_url: '/customers/steph-dietz.png',
+        amount: '15795'
+      }
+    ];
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch the latest invoices.');

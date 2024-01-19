@@ -4,13 +4,13 @@ import {
   CustomersTableType,
   InvoiceForm,
   InvoicesTable,
-  LatestInvoiceRaw,
   User,
-  Revenue,
 } from './definitions';
+import { unstable_noStore as noStore } from 'next/cache';
 import { formatCurrency } from './utils';
 
 export async function fetchRevenue() {
+  noStore();
   // Add noStore() here prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
 
@@ -18,12 +18,12 @@ export async function fetchRevenue() {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // const data = await sql<Revenue>`SELECT * FROM revenue`;
 
-    // console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 3 seconds.');
 
     return [
       {
@@ -46,7 +46,9 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noStore();
   try {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     // const data = await sql<LatestInvoiceRaw>`
     //   SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
     //   FROM invoices
@@ -64,35 +66,35 @@ export async function fetchLatestInvoices() {
         name: 'Delba de Oliveira',
         email: 'delba@oliveira.com',
         image_url: '/customers/delba-de-oliveira.png',
-        amount: '15795'
+        amount: formatCurrency(8945 ?? '0')
       },
       {
         id: '3958dc9e-742f-4377-85e9-fec4b6a6442a',
         name: 'Lee Robinson',
         email: 'lee@robinson.com',
         image_url: '/customers/lee-robinson.png',
-        amount: '15795'
+        amount: formatCurrency(44800 ?? '0')
       },
       {
         id: '3958dc9e-737f-4377-85e9-fec4b6a6442a',
         name: 'Hector Simpson',
         email: 'hector@simpson.com',
         image_url: '/customers/hector-simpson.png',
-        amount: '15795'
+        amount: formatCurrency(500 ?? '0')
       },
       {
         id: '50ca3e18-62cd-11ee-8c99-0242ac120002',
         name: 'Steven Tey',
         email: 'steven@tey.com',
         image_url: '/customers/steven-tey.png',
-        amount: '15795'
+        amount: formatCurrency(34577 ?? '0')
       },
       {
         id: '3958dc9e-787f-4377-85e9-fec4b6a6442a',
         name: 'Steph Dietz',
         email: 'steph@dietz.com',
         image_url: '/customers/steph-dietz.png',
-        amount: '15795'
+        amount: formatCurrency(54246 ?? '0')
       }
     ];
   } catch (error) {
@@ -102,34 +104,36 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
+  noStore();
   try {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+    // const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
+    // const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
+    // const invoiceStatusPromise = sql`SELECT
+    //      SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
+    //      SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
+    //      FROM invoices`;
 
-    const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ]);
+    // const data = await Promise.all([
+    //   invoiceCountPromise,
+    //   customerCountPromise,
+    //   invoiceStatusPromise,
+    // ]);
 
-    const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
-    const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+    const numberOfInvoices = Number(15 ?? '0');
+    const numberOfCustomers = Number(8 ?? '0');
+    const totalPaidInvoices = formatCurrency(110636 ?? '0');
+    const totalPendingInvoices = formatCurrency(133911 ?? '0');
 
     return {
-      numberOfCustomers,
       numberOfInvoices,
+      numberOfCustomers,
       totalPaidInvoices,
-      totalPendingInvoices,
-    };
+      totalPendingInvoices
+    }
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch card data.');
@@ -141,31 +145,78 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
+  noStore();
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const invoices = await sql<InvoicesTable>`
-      SELECT
-        invoices.id,
-        invoices.amount,
-        invoices.date,
-        invoices.status,
-        customers.name,
-        customers.email,
-        customers.image_url
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
-      ORDER BY invoices.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
+    // const invoices = await sql<InvoicesTable>`
+    //   SELECT
+    //     invoices.id,
+    //     invoices.amount,
+    //     invoices.date,
+    //     invoices.status,
+    //     customers.name,
+    //     customers.email,
+    //     customers.image_url
+    //   FROM invoices
+    //   JOIN customers ON invoices.customer_id = customers.id
+    //   WHERE
+    //     customers.name ILIKE ${`%${query}%`} OR
+    //     customers.email ILIKE ${`%${query}%`} OR
+    //     invoices.amount::text ILIKE ${`%${query}%`} OR
+    //     invoices.date::text ILIKE ${`%${query}%`} OR
+    //     invoices.status ILIKE ${`%${query}%`}
+    //   ORDER BY invoices.date DESC
+    // LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    // `;
 
-    return invoices.rows;
+    return [
+      {
+        id: '3958dc9e-712f-4377-85e9-fec4b6a6442a',
+        name: 'Delba de Oliveira',
+        email: 'delba@oliveira.com',
+        image_url: '/customers/delba-de-oliveira.png',
+        amount: formatCurrency(8945 ?? '0'),
+        date: '19/01/2023',
+        status: 'pending'
+      },
+      {
+        id: '3958dc9e-742f-4377-85e9-fec4b6a6442a',
+        name: 'Lee Robinson',
+        email: 'lee@robinson.com',
+        image_url: '/customers/lee-robinson.png',
+        amount: formatCurrency(44800 ?? '0'),
+        date: '19/01/2023',
+        status: 'pending'
+      },
+      {
+        id: '3958dc9e-737f-4377-85e9-fec4b6a6442a',
+        name: 'Hector Simpson',
+        email: 'hector@simpson.com',
+        image_url: '/customers/hector-simpson.png',
+        amount: formatCurrency(500 ?? '0'),
+        date: '19/01/2023',
+        status: 'pending'
+      },
+      {
+        id: '50ca3e18-62cd-11ee-8c99-0242ac120002',
+        name: 'Steven Tey',
+        email: 'steven@tey.com',
+        image_url: '/customers/steven-tey.png',
+        amount: formatCurrency(34577 ?? '0'),
+        date: '19/01/2023',
+        status: 'pending'
+      },
+      {
+        id: '3958dc9e-787f-4377-85e9-fec4b6a6442a',
+        name: 'Steph Dietz',
+        email: 'steph@dietz.com',
+        image_url: '/customers/steph-dietz.png',
+        amount: formatCurrency(54246 ?? '0'),
+        date: '19/01/2023',
+        status: 'pending'
+      }
+    ]
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoices.');
@@ -174,6 +225,7 @@ export async function fetchFilteredInvoices(
 
 export async function fetchInvoicesPages(query: string) {
   try {
+    noStore();
     const count = await sql`SELECT COUNT(*)
     FROM invoices
     JOIN customers ON invoices.customer_id = customers.id
@@ -195,6 +247,7 @@ export async function fetchInvoicesPages(query: string) {
 
 export async function fetchInvoiceById(id: string) {
   try {
+    noStore();
     const data = await sql<InvoiceForm>`
       SELECT
         invoices.id,

@@ -17,8 +17,8 @@ export const formatDateToLocal = (
     month: 'short',
     year: 'numeric',
   };
-  const formatter = new Intl.DateTimeFormat(locale, options);
-  return formatter.format(date);
+  // const formatter = new Intl.DateTimeFormat(locale, options);
+  // return formatter.format(date);
 };
 
 export const generateYAxis = (revenue: Revenue[]) => {

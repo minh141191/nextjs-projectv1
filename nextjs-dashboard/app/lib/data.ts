@@ -215,6 +215,15 @@ export async function fetchFilteredInvoices(
         amount: formatCurrency(54246 ?? '0'),
         date: '19/01/2023',
         status: 'pending'
+      },
+      {
+        id: '3958dc9e-787f-4377-85e9-fec4b6a6442a',
+        name: 'Steph Dietz',
+        email: 'steph@dietz.com',
+        image_url: '/customers/steph-dietz.png',
+        amount: formatCurrency(54246 ?? '0'),
+        date: '19/01/2023',
+        status: 'pending'
       }
     ]
   } catch (error) {
@@ -226,19 +235,19 @@ export async function fetchFilteredInvoices(
 export async function fetchInvoicesPages(query: string) {
   try {
     noStore();
-    const count = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
-    WHERE
-      customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
-  `;
+    //   const count = await sql`SELECT COUNT(*)
+    //   FROM invoices
+    //   JOIN customers ON invoices.customer_id = customers.id
+    //   WHERE
+    //     customers.name ILIKE ${`%${query}%`} OR
+    //     customers.email ILIKE ${`%${query}%`} OR
+    //     invoices.amount::text ILIKE ${`%${query}%`} OR
+    //     invoices.date::text ILIKE ${`%${query}%`} OR
+    //     invoices.status ILIKE ${`%${query}%`}
+    // `;
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
+    // const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return 30;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of invoices.');

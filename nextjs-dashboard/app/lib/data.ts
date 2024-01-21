@@ -217,11 +217,11 @@ export async function fetchFilteredInvoices(
         status: 'pending'
       },
       {
-        id: '3958dc9e-787f-4377-85e9-fec4b6a6442a',
-        name: 'Steph Dietz',
-        email: 'steph@dietz.com',
+        id: '3958dc9e-787f-4377-85e9-fec4b6a6443a',
+        name: 'Steph Dietzz',
+        email: 'steph@dietzz.com',
         image_url: '/customers/steph-dietz.png',
-        amount: formatCurrency(54246 ?? '0'),
+        amount: formatCurrency(54244 ?? '0'),
         date: '19/01/2023',
         status: 'pending'
       }
@@ -282,16 +282,37 @@ export async function fetchInvoiceById(id: string) {
 
 export async function fetchCustomers() {
   try {
-    const data = await sql<CustomerField>`
-      SELECT
-        id,
-        name
-      FROM customers
-      ORDER BY name ASC
-    `;
+    // const data = await sql<CustomerField>`
+    //   SELECT
+    //     id,
+    //     name
+    //   FROM customers
+    //   ORDER BY name ASC
+    // `;
 
-    const customers = data.rows;
-    return customers;
+    // const customers = data.rows;
+    return [
+      {
+        id: '3958dc9e-712f-4377-85e9-fec4b6a6442a',
+        name: 'Delba de Oliveira'
+      },
+      {
+        id: '3958dc9e-742f-4377-85e9-fec4b6a6442a',
+        name: 'Lee Robinson'
+      },
+      {
+        id: '3958dc9e-737f-4377-85e9-fec4b6a6442a',
+        name: 'Hector Simpson'
+      },
+      {
+        id: '50ca3e18-62cd-11ee-8c99-0242ac120002',
+        name: 'Steven Tey'
+      },
+      {
+        id: '3958dc9e-787f-4377-85e9-fec4b6a6442a',
+        name: 'Steph Dietz'
+      }
+    ];
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch all customers.');
